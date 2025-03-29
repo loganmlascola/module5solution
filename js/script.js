@@ -83,6 +83,11 @@ $ajaxUtils.sendGetRequest(
     var randomCategory = chooseRandomCategory(categories);
     var chosenCategoryShortName = randomCategory.short_name;
     buildAndShowHomeHTML(categories, chosenCategoryShortName);
+  },
+  true,
+  function(error) {
+    console.error("Error fetching categories:", error);
+    insertHtml("#main-content", "<p>Error loading categories. Please try again later.</p>");
   }
   // ***** <---- TODO: STEP 1: Substitute [...] ******
   );// Explicitly setting the flag to get JSON from server processed into an object literal
@@ -127,7 +132,6 @@ function buildAndShowHomeHTML (categories, randomCategoryShortName) {
       // Use the existing insertHtml function for that purpose. Look through this code for an example
       // of how to do that.
       // ....
-
     },
     false,
     function(error) {
@@ -155,7 +159,6 @@ dc.loadMenuCategories = function (categoryShort) {
     function(error) {
       console.error("Error fetching menu items for category " + categoryShort + ":", error);
       insertHtml("#main-content", "<p>Error loading menu items for category " + categoryShort + ". Please try again later.</p>");
-
     }
   );
 };
@@ -200,9 +203,19 @@ function buildAndShowCategoriesHTML (categories) {
                                     categoryHtml);
           insertHtml("#main-content", categoriesViewHtml);
         },
-        false);
+        false,
+        function(error) {
+          console.error("Error fetching category snippet:", error);
+          insertHtml("#main-content", "<p>Error loading category snippet. Please try again later.</p>");
+        }
+      );
     },
-    false);
+    false,
+    function(error) {
+      console.error("Error fetching category snippet:", error);
+      insertHtml("#main-content", "<p>Error loading category snippet. Please try again later.</p>");
+    }
+  );
 }
 
 
@@ -256,9 +269,19 @@ function buildAndShowMenuItemsHTML (categoryMenuItems) {
                                    menuItemHtml);
           insertHtml("#main-content", menuItemsViewHtml);
         },
-        false);
+        false,
+        function(error) {
+          console.error("Error fetching menu item snippet:", error);
+          insertHtml("#main-content", "<p>Error loading menu item snippet. Please try again later.</p>");
+        }
+      );
     },
-    false);
+    false,
+    function(error) {
+      console.error("Error fetching menu item snippet:", error);
+      insertHtml("#main-content", "<p>Error loading menu item snippet. Please try again later.</p>");
+    }
+  );
 }
 
 
