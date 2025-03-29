@@ -18,8 +18,8 @@ var allCategoriesUrl =
   "https://coursera-jhu-default-rtdb.firebaseio.com/categories.json";
 var categoriesTitleHtml = "snippets/categories-title-snippet.html";
 var categoryHtml = "snippets/category-snippet.html";
-var menuItemsUrl =
-  "https://coursera-jhu-default-rtdb.firebaseio.com/menu_items/";
+var menuItemsUrl = "http://localhost:8000/categories";
+  //"https://coursera-jhu-default-rtdb.firebaseio.com/menu_items/";
 var menuItemsTitleHtml = "snippets/menu-items-title.html";
 var menuItemHtml = "snippets/menu-item.html";
 
@@ -62,7 +62,6 @@ var switchMenuToActive = function () {
 
 // On page load (before images or CSS)
 document.addEventListener("DOMContentLoaded", function (event) {
-
 // TODO: STEP 0: Look over the code from
 // *** start ***
 // to
@@ -75,11 +74,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
 // random category into the home HTML snippet, and then insert that snippet into our
 // main page (index.html).
 // 
-
-
 // TODO: STEP 1: Substitute [...] below with the *value* of the function buildAndShowHomeHTML,
 // so it can be called when server responds with the categories data.
-
 // *** start ***
 // On first load, show home view
 showLoading("#main-content");
@@ -88,9 +84,15 @@ $ajaxUtils.sendGetRequest(
   function (categories) {
     var randomCategory = chooseRandomCategory(categories);
     var chosenCategoryShortName = randomCategory.short_name;
+
+    buildAndShowHomeHTML(categories, chosenCategoryShortName);
   }, 
   // ***** <---- TODO: STEP 1: Substitute [...] ******
-  true
+  true,
+  function (error) {
+    console.error("Error fetching categories:", error);
+    insertHtml("#main-content", "<p>Error loading categories. Please try again later.</p>");
+  }
   ); // Explicitly setting the flag to get JSON from server processed into an object literal
 });
 // *** finish **
@@ -99,12 +101,11 @@ $ajaxUtils.sendGetRequest(
 // Builds HTML for the home page based on categories array
 // returned from the server.
 function buildAndShowHomeHTML (categories, randomCategoryShortName) {
-
+  var chosenCategoryShortName = randomCategoryShortName;
   // Load home snippet page
   $ajaxUtils.sendGetRequest(
     homeHtmlUrl,
     function (homeHtml) {
-
       var homeHtmlToInsertIntoMainPage = homeHtml.replace("{{randomCategoryShortName}}", chosenCategoryShortName);
       insertHtml("#main-content", homeHtmlToInsertIntoMainPage);
 
