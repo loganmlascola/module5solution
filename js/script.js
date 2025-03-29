@@ -21,7 +21,9 @@ var categoryHtml = "snippets/category-snippet.html";
 var menuItemsUrl = "http://localhost:8000/categories";
   //"https://coursera-jhu-default-rtdb.firebaseio.com/menu_items/";
 var menuItemsTitleHtml = "snippets/menu-items-title.html";
-var menuItemHtml = "snippets/menu-item.html";
+var menuItemHtml = "http://localhost:8000/menu_items/";
+
+//"snippets/menu-item.html";
 
 // Convenience function for inserting innerHTML for 'select'
 var insertHtml = function (selector, html) {
@@ -84,7 +86,6 @@ $ajaxUtils.sendGetRequest(
   function (categories) {
     var randomCategory = chooseRandomCategory(categories);
     var chosenCategoryShortName = randomCategory.short_name;
-
     buildAndShowHomeHTML(categories, chosenCategoryShortName);
   }, 
   // ***** <---- TODO: STEP 1: Substitute [...] ******
@@ -135,10 +136,13 @@ function buildAndShowHomeHTML (categories, randomCategoryShortName) {
       // ....
 
     },
-    false); // False here because we are getting just regular HTML from the server, so no need to process JSON.
+    false,
+    function(error) {
+      console.error("Error fetching home snippet:", error);
+      insertHtml("#main-content", "<p>Error loading home page. Please try again later.</p>");
+    }
+  ); // False here because we are getting just regular HTML from the server, so no need to process JSON.
 }
-
-
 // Given array of category objects, returns a random category object.
 function chooseRandomCategory (categories) {
   // Choose a random index into the array (from 0 inclusively until array length (exclusively))
@@ -148,13 +152,19 @@ function chooseRandomCategory (categories) {
   return categories[randomArrayIndex];
 }
 
-
 // Load the menu categories view
-dc.loadMenuCategories = function () {
+dc.loadMenuCategories = function (categoryShort) {
   showLoading("#main-content");
   $ajaxUtils.sendGetRequest(
-    allCategoriesUrl,
-    buildAndShowCategoriesHTML);
+    menuItemsUrl + categoryShort + ".json",
+    buildAndShowCategoriesHTML,
+    true,
+    function(error) {
+      console.error("Error fetching menu items for category " + categoryShort + ":", error);
+      insertHtml("#main-content", "<p>Error loading menu items for category " + categoryShort + ". Please try again later.</p>");
+
+    }
+  );
 };
 
 
