@@ -18,12 +18,9 @@ var allCategoriesUrl =
   "https://coursera-jhu-default-rtdb.firebaseio.com/categories.json";
 var categoriesTitleHtml = "snippets/categories-title-snippet.html";
 var categoryHtml = "snippets/category-snippet.html";
-var menuItemsUrl = "http://localhost:8000/categories";
-  //"https://coursera-jhu-default-rtdb.firebaseio.com/menu_items/";
+var menuItemsUrl = "https://coursera-jhu-default-rtdb.firebaseio.com/menu_items/";
 var menuItemsTitleHtml = "snippets/menu-items-title.html";
-var menuItemHtml = "http://localhost:8000/menu_items/";
-
-//"snippets/menu-item.html";
+var menuItemHtml = "snippets/menu-item.html";
 
 // Convenience function for inserting innerHTML for 'select'
 var insertHtml = function (selector, html) {
