@@ -168,7 +168,16 @@ dc.loadMenuItems = function (categoryShort) {
   showLoading("#main-content");
   $ajaxUtils.sendGetRequest(
     menuItemsUrl + categoryShort + ".json",
-    buildAndShowMenuItemsHTML);
+    buildAndShowMenuItemsHTML,
+    true,
+    function(error) {
+      console.error("Error fetching menu items for category " + categoryShort + ":", error);
+      insertHtml("#main-content", "<p>Error loading menu items for category " + categoryShort + ". Please try again later.</p>");
+
+    }
+     
+  );
+
 };
 
 
