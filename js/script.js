@@ -84,14 +84,9 @@ $ajaxUtils.sendGetRequest(
     var randomCategory = chooseRandomCategory(categories);
     var chosenCategoryShortName = randomCategory.short_name;
     buildAndShowHomeHTML(categories, chosenCategoryShortName);
-  }, 
-  // ***** <---- TODO: STEP 1: Substitute [...] ******
-  true,
-  function (error) {
-    console.error("Error fetching categories:", error);
-    insertHtml("#main-content", "<p>Error loading categories. Please try again later.</p>");
   }
-  ); // Explicitly setting the flag to get JSON from server processed into an object literal
+  // ***** <---- TODO: STEP 1: Substitute [...] ******
+  );// Explicitly setting the flag to get JSON from server processed into an object literal
 });
 // *** finish **
 
