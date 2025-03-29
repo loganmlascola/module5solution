@@ -9,6 +9,37 @@ $(function () { // Same as document.addEventListener("DOMContentLoaded"...
   });
 });
 
+
+var fallbackCategories = [
+  { "short_name": "L", "name": "Lunch" },
+  { "short_name": "D", "name": "Dinner" },
+  { "short_name": "S", "name": "Sushi" }
+];
+
+var fallbackMenuItems = {
+  "L": {
+    "category": { "short_name": "L", "name": "Lunch", "special_instructions": "Available 11:15am - 2:30pm" },
+    "menu_items": [
+      { "short_name": "L1", "name": "Kung Pao Chicken", "description": "Spicy stir-fry with peanuts", "price_small": 8.99, "price_large": 12.99, "small_portion_name": "Small", "large_portion_name": "Large" },
+      { "short_name": "L2", "name": "Sweet and Sour Pork", "description": "Classic dish with pineapple", "price_small": 7.99, "price_large": 11.99, "small_portion_name": "Small", "large_portion_name": "Large" }
+    ]
+  },
+  "D": {
+    "category": { "short_name": "D", "name": "Dinner", "special_instructions": "Available after 5:00pm" },
+    "menu_items": [
+      { "short_name": "D1", "name": "Beef with Broccoli", "description": "Tender beef with fresh broccoli", "price_small": 9.99, "price_large": 13.99, "small_portion_name": "Small", "large_portion_name": "Large" }
+    ]
+  },
+  "S": {
+    "category": { "short_name": "S", "name": "Sushi", "special_instructions": "Freshly made" },
+    "menu_items": [
+      { "short_name": "S1", "name": "California Roll", "description": "Crab, avocado, and cucumber", "price_small": 5.99, "price_large": 9.99, "small_portion_name": "Small", "large_portion_name": "Large" }
+    ]
+  }
+};
+
+
+
 (function (global) {
 
 var dc = {};
@@ -80,9 +111,16 @@ showLoading("#main-content");
 $ajaxUtils.sendGetRequest(
   allCategoriesUrl,
   function (categories) {
-    var randomCategory = chooseRandomCategory(categories);
-    var chosenCategoryShortName = randomCategory.short_name;
-    buildAndShowHomeHTML(categories, chosenCategoryShortName);
+    if (categories) {
+      var randomCategory = chooseRandomCategory(categories);
+      var chosenCategoryShortName = randomCategory.short_name;
+      buildAndShowHomeHTML(categories, chosenCategoryShortName);
+    } else {
+      console.error("Categories data is null or undefined");
+      var randomCategory = chooseRandomCategory(fallbackCategories);
+      var chosenCategoryShortName = randomCategory.short_name;
+      buildAndShowHomeHTML(fallbackCategories, chosenCategoryShortName);
+    }
   },
   true,
   function(error) {
@@ -150,11 +188,18 @@ function chooseRandomCategory (categories) {
 }
 
 // Load the menu categories view
-dc.loadMenuCategories = function (categoryShort) {
+dc.loadMenuCategories = function () {
   showLoading("#main-content");
   $ajaxUtils.sendGetRequest(
-    menuItemsUrl + categoryShort + ".json",
-    buildAndShowCategoriesHTML,
+    allCategoriesUrl,
+    function(categories) {
+      if (categories) {
+        buildAndShowCategoriesHTML(categories);
+      } else {
+        console.error("Categories data is null or undefined");
+        buildAndShowCategoriesHTML(fallbackCategories);
+      }
+    },
     true,
     function(error) {
       console.error("Error fetching menu items for category " + categoryShort + ":", error);
@@ -170,7 +215,14 @@ dc.loadMenuItems = function (categoryShort) {
   showLoading("#main-content");
   $ajaxUtils.sendGetRequest(
     menuItemsUrl + categoryShort + ".json",
-    buildAndShowMenuItemsHTML,
+    function(data) {
+      if (data) {
+        buildAndShowMenuItemsHTML(data);
+      } else {
+        console.error("Menu items data is null or undefined for category " + categoryShort);
+        buildAndShowMenuItemsHTML(fallbackMenuItems[categoryShort] || { category: { name: "Unknown" }, menu_items: [] });
+      }
+    },
     true,
     function(error) {
       console.error("Error fetching menu items for category " + categoryShort + ":", error);
@@ -186,6 +238,10 @@ dc.loadMenuItems = function (categoryShort) {
 // Builds HTML for the categories page based on the data
 // from the server
 function buildAndShowCategoriesHTML (categories) {
+  if (!categories) {
+    console.error("Categories data is null or undefined");
+    categories = fallbackCategories;
+  }
   // Load title snippet of categories page
   $ajaxUtils.sendGetRequest(
     categoriesTitleHtml,
@@ -252,6 +308,11 @@ function buildCategoriesViewHtml(categories,
 // Builds HTML for the single category page based on the data
 // from the server
 function buildAndShowMenuItemsHTML (categoryMenuItems) {
+  if (!categoryMenuItems) {
+    console.error("Menu items data is null or undefined");
+    categoryMenuItems = { category: { name: "Unknown" }, menu_items: [] };
+  }
+  
   // Load title snippet of menu items page
   $ajaxUtils.sendGetRequest(
     menuItemsTitleHtml,
