@@ -60,27 +60,12 @@ var switchMenuToActive = function () {
 
 // On page load (before images or CSS)
 document.addEventListener("DOMContentLoaded", function (event) {
-// TODO: STEP 0: Look over the code from
-// *** start ***
-// to
-// *** finish ***
-// below.
-// We changed this code to retrieve all categories from the server instead of
-// simply requesting home HTML snippet. We now also have another function
-// called buildAndShowHomeHTML that will receive all the categories from the server
-// and process them: choose random category, retrieve home HTML snippet, insert that
-// random category into the home HTML snippet, and then insert that snippet into our
-// main page (index.html).
-// 
-// TODO: STEP 1: Substitute [...] below with the *value* of the function buildAndShowHomeHTML,
-// so it can be called when server responds with the categories data.
-// *** start ***
-// On first load, show home view
+
 showLoading("#main-content");
 $ajaxUtils.sendGetRequest(
   allCategoriesUrl,
   function (categories) {
-    if (categories) {
+    if (categories) { // checking if categories are not null
       var randomCategory = chooseRandomCategory(categories);
       var chosenCategoryShortName = randomCategory.short_name;
       buildAndShowHomeHTML(categories, chosenCategoryShortName);
@@ -92,7 +77,7 @@ $ajaxUtils.sendGetRequest(
     }
   },
   true,
-  function(error) {
+  function(error) { // checking if data is not null
     console.error("Error fetching categories:", error);
     insertHtml("#main-content", "<p>Error loading categories. Please try again later.</p>");
   }
@@ -111,37 +96,10 @@ function buildAndShowHomeHTML (categories, randomCategoryShortName) {
     homeHtmlUrl,
     function (homeHtml) {
       var homeHtmlToInsertIntoMainPage = insertProperty(homeHtml, "randomCategoryShortName", "'" + chosenCategoryShortName + "'");
-      
-      //homeHtml.replace("{{randomCategoryShortName}}", chosenCategoryShortName);
       insertHtml("#main-content", homeHtmlToInsertIntoMainPage);
-
-      // TODO: STEP 2: Here, call chooseRandomCategory, passing it retrieved 'categories'
-      // Pay attention to what type of data that function returns vs what the chosenCategoryShortName
-      // variable's name implies it expects.
-      // var chosenCategoryShortName = ....
-
-
-      // TODO: STEP 3: Substitute {{randomCategoryShortName}} in the home html snippet with the
-      // chosen category from STEP 2. Use existing insertProperty function for that purpose.
-      // Look through this code for an example of how to do use the insertProperty function.
-      // WARNING! You are inserting something that will have to result in a valid Javascript
-      // syntax because the substitution of {{randomCategoryShortName}} becomes an argument
-      // being passed into the $dc.loadMenuItems function. Think about what that argument needs
-      // to look like. For example, a valid call would look something like this:
-      // $dc.loadMenuItems('L')
-      // Hint: you need to surround the chosen category short name with something before inserting
-      // it into the home html snippet.
-      //
-      // var homeHtmlToInsertIntoMainPage = ....
-
-
-      // TODO: STEP 4: Insert the produced HTML in STEP 3 into the main page
-      // Use the existing insertHtml function for that purpose. Look through this code for an example
-      // of how to do that.
-      // ....
     },
     false,
-    function(error) {
+    function(error) { // checking if data is not null
       console.error("Error fetching home snippet:", error);
       insertHtml("#main-content", "<p>Error loading home page. Please try again later.</p>");
     }
@@ -162,16 +120,11 @@ dc.loadMenuCategories = function () {
   $ajaxUtils.sendGetRequest(
     allCategoriesUrl,
     function(categories) {
-      if (categories) {
-        buildAndShowCategoriesHTML(categories);
-      } else {
-        console.error("Categories data is null or undefined");
-        buildAndShowCategoriesHTML(fallbackCategories);
-      }
+      buildAndShowCategoriesHTML(categories || []); // created an array if categories are null
     },
     true,
-    function(error) {
-      console.error("Error fetching menu items for category " + categoryShort + ":", error);
+    function(error) { // checking if data is not null
+      console.error("Error fetching menu items for category " + categoryShort + ":", error); 
       insertHtml("#main-content", "<p>Error loading menu items for category " + categoryShort + ". Please try again later.</p>");
     }
   );
@@ -193,7 +146,7 @@ dc.loadMenuItems = function (categoryShort) {
       }
     },
     true,
-    function(error) {
+    function(error) { // checking if data is not null
       console.error("Error fetching menu items for category " + categoryShort + ":", error);
       insertHtml("#main-content", "<p>Error loading menu items for category " + categoryShort + ". Please try again later.</p>");
 
@@ -207,10 +160,6 @@ dc.loadMenuItems = function (categoryShort) {
 // Builds HTML for the categories page based on the data
 // from the server
 function buildAndShowCategoriesHTML (categories) {
-  if (!categories) {
-    console.error("Categories data is null or undefined");
-    categories = fallbackCategories;
-  }
   // Load title snippet of categories page
   $ajaxUtils.sendGetRequest(
     categoriesTitleHtml,
@@ -229,19 +178,20 @@ function buildAndShowCategoriesHTML (categories) {
           insertHtml("#main-content", categoriesViewHtml);
         },
         false,
-        function(error) {
+        function(error) { // checking if data is not null
           console.error("Error fetching category snippet:", error);
           insertHtml("#main-content", "<p>Error loading category snippet. Please try again later.</p>");
         }
       );
     },
     false,
-    function(error) {
+    function(error) { // checking if data is not null
       console.error("Error fetching category snippet:", error);
       insertHtml("#main-content", "<p>Error loading category snippet. Please try again later.</p>");
     }
   );
 }
+
 
 
 // Using categories data and snippets html
@@ -277,11 +227,6 @@ function buildCategoriesViewHtml(categories,
 // Builds HTML for the single category page based on the data
 // from the server
 function buildAndShowMenuItemsHTML (categoryMenuItems) {
-  if (!categoryMenuItems) {
-    console.error("Menu items data is null or undefined");
-    categoryMenuItems = { category: { name: "Unknown" }, menu_items: [] };
-  }
-  
   // Load title snippet of menu items page
   $ajaxUtils.sendGetRequest(
     menuItemsTitleHtml,
@@ -300,14 +245,14 @@ function buildAndShowMenuItemsHTML (categoryMenuItems) {
           insertHtml("#main-content", menuItemsViewHtml);
         },
         false,
-        function(error) {
+        function(error) { // checking if data is not null
           console.error("Error fetching menu item snippet:", error);
           insertHtml("#main-content", "<p>Error loading menu item snippet. Please try again later.</p>");
         }
       );
     },
     false,
-    function(error) {
+    function(error) { // checking if data is not null
       console.error("Error fetching menu item snippet:", error);
       insertHtml("#main-content", "<p>Error loading menu item snippet. Please try again later.</p>");
     }
