@@ -9,37 +9,6 @@ $(function () { // Same as document.addEventListener("DOMContentLoaded"...
   });
 });
 
-
-var fallbackCategories = [
-  { "short_name": "L", "name": "Lunch" },
-  { "short_name": "D", "name": "Dinner" },
-  { "short_name": "S", "name": "Sushi" }
-];
-
-var fallbackMenuItems = {
-  "L": {
-    "category": { "short_name": "L", "name": "Lunch", "special_instructions": "Available 11:15am - 2:30pm" },
-    "menu_items": [
-      { "short_name": "L1", "name": "Kung Pao Chicken", "description": "Spicy stir-fry with peanuts", "price_small": 8.99, "price_large": 12.99, "small_portion_name": "Small", "large_portion_name": "Large" },
-      { "short_name": "L2", "name": "Sweet and Sour Pork", "description": "Classic dish with pineapple", "price_small": 7.99, "price_large": 11.99, "small_portion_name": "Small", "large_portion_name": "Large" }
-    ]
-  },
-  "D": {
-    "category": { "short_name": "D", "name": "Dinner", "special_instructions": "Available after 5:00pm" },
-    "menu_items": [
-      { "short_name": "D1", "name": "Beef with Broccoli", "description": "Tender beef with fresh broccoli", "price_small": 9.99, "price_large": 13.99, "small_portion_name": "Small", "large_portion_name": "Large" }
-    ]
-  },
-  "S": {
-    "category": { "short_name": "S", "name": "Sushi", "special_instructions": "Freshly made" },
-    "menu_items": [
-      { "short_name": "S1", "name": "California Roll", "description": "Crab, avocado, and cucumber", "price_small": 5.99, "price_large": 9.99, "small_portion_name": "Small", "large_portion_name": "Large" }
-    ]
-  }
-};
-
-
-
 (function (global) {
 
 var dc = {};
