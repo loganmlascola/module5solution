@@ -74,7 +74,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
 // and process them: choose random category, retrieve home HTML snippet, insert that
 // random category into the home HTML snippet, and then insert that snippet into our
 // main page (index.html).
-//
+// 
+
+
 // TODO: STEP 1: Substitute [...] below with the *value* of the function buildAndShowHomeHTML,
 // so it can be called when server responds with the categories data.
 
@@ -83,20 +85,28 @@ document.addEventListener("DOMContentLoaded", function (event) {
 showLoading("#main-content");
 $ajaxUtils.sendGetRequest(
   allCategoriesUrl,
-  [...], // ***** <---- TODO: STEP 1: Substitute [...] ******
-  true); // Explicitly setting the flag to get JSON from server processed into an object literal
+  function (categories) {
+    var randomCategory = chooseRandomCategory(categories);
+    var chosenCategoryShortName = randomCategory.short_name;
+  }, 
+  // ***** <---- TODO: STEP 1: Substitute [...] ******
+  true
+  ); // Explicitly setting the flag to get JSON from server processed into an object literal
 });
 // *** finish **
 
 
 // Builds HTML for the home page based on categories array
 // returned from the server.
-function buildAndShowHomeHTML (categories) {
+function buildAndShowHomeHTML (categories, randomCategoryShortName) {
 
   // Load home snippet page
   $ajaxUtils.sendGetRequest(
     homeHtmlUrl,
     function (homeHtml) {
+
+      var homeHtmlToInsertIntoMainPage = homeHtml.replace("{{randomCategoryShortName}}", chosenCategoryShortName);
+      insertHtml("#main-content", homeHtmlToInsertIntoMainPage);
 
       // TODO: STEP 2: Here, call chooseRandomCategory, passing it retrieved 'categories'
       // Pay attention to what type of data that function returns vs what the chosenCategoryShortName
